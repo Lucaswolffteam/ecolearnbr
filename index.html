@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>EcoLearn — Aprenda. Jogue. Preserve.</title>
+<meta name="description" content="EcoLearn: plataforma web gratuita de educação ambiental gamificada.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --dark:#2C7E32; --mid:#4B8D4F; --soft:#F1F7E9; --mod:#E8F6E7; --line:#E1E8E1;
+    --yellow:#FFF6D9; --purple:#F3E5F6; --blue:#1976D3; --gray:#9D9D9D;
+    --text:#20241F; --muted:#667066; --deep:#16401A;
+  }
+  :root{color-scheme:light;box-sizing:border-box;padding-bottom:env(safe-area-inset-bottom,0px)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;scroll-padding-top:70px}
+  body{background:#fff;font-family:'Inter',sans-serif;color:var(--text);background:#fff;line-height:1.55}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1140px;margin:0 auto;padding:0 28px}
+  .btn{border:none;cursor:pointer;font-family:inherit;font-weight:700;border-radius:100px;transition:transform .15s,box-shadow .15s}
+  .btn:hover{transform:translateY(-2px)}
+  .btn-light{background:#A9DDAE;color:#123816;padding:13px 28px;font-size:.95rem}
+  .btn-dark{background:var(--dark);color:#fff;padding:13px 28px;font-size:.95rem}
+  .btn-sm{padding:8px 20px;font-size:.85rem}
+  .btn-outline{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.75)}
+
+  /* NAV */
+  header{position:sticky;top:0;padding-top:env(safe-area-inset-top,0px);z-index:50;background:var(--dark);color:#fff}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:66px}
+  .brand{font-weight:800;font-size:1.2rem;display:flex;gap:8px;align-items:center}
+  .links{display:flex;gap:30px;font-size:.92rem;font-weight:500}
+  .links a{opacity:.9}.links a:hover{opacity:1;text-decoration:underline;text-underline-offset:6px}
+  .nav-right{display:flex;gap:10px;align-items:center}
+  .xp-pill{background:rgba(255,255,255,.18);padding:6px 14px;border-radius:100px;font-size:.85rem;font-weight:700}
+  .avatar{width:32px;height:32px;border-radius:50%;background:#A9DDAE;color:#123816;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800}
+  .logout{font-size:.78rem;opacity:.85;cursor:pointer;background:none;border:none;color:#fff;font-family:inherit;text-decoration:underline}
+  @media(max-width:820px){.links{display:none}}
+
+  /* HERO */
+  .hero{background:linear-gradient(135deg,var(--dark),var(--mid));color:#fff;padding:100px 0 90px;position:relative;overflow:hidden}
+  .hero .wrap{display:grid;grid-template-columns:1.2fr .8fr;gap:40px;align-items:center}
+  .hero h1{font-size:clamp(2.4rem,5.4vw,4rem);font-weight:800;line-height:1.05;margin-bottom:16px;letter-spacing:-.02em}
+  .hero p{font-size:1.15rem;opacity:.93;margin-bottom:30px;max-width:480px}
+  .hero .cta{display:flex;gap:12px;flex-wrap:wrap}
+  .globe{font-size:11rem;text-align:center;opacity:.35;line-height:1}
+  @media(max-width:820px){.hero .wrap{grid-template-columns:1fr}.globe{display:none}.hero{padding:70px 0}}
+
+  .stats{background:var(--soft);padding:22px 0}
+  .stats .wrap{display:flex;justify-content:space-around;flex-wrap:wrap;gap:16px;font-weight:600;color:#2c3a2c}
+  .stats b{font-weight:800}
+
+  section{padding:84px 0}
+  .eyebrow{font-size:.75rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--dark);margin-bottom:10px}
+  h2{font-size:clamp(1.7rem,3vw,2.3rem);font-weight:800;letter-spacing:-.01em;margin-bottom:12px;color:var(--deep)}
+  .sub{color:var(--muted);max-width:620px;margin-bottom:40px}
+  .alt{background:#FAFCF7}
+
+  /* MODULES */
+  .mod-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+  .mod{border:1px solid var(--line);border-radius:14px;padding:24px 14px;text-align:center;background:#fff;transition:transform .15s,box-shadow .15s}
+  .mod:not(.locked):hover{transform:translateY(-4px);box-shadow:0 14px 26px -16px rgba(0,0,0,.3);cursor:pointer}
+  .mod.locked{opacity:.7}
+  .mod .ic{font-size:2rem;margin-bottom:10px}
+  .mod h3{font-size:.9rem;min-height:40px;line-height:1.25;margin-bottom:12px}
+  .bar{height:7px;background:#eef2ee;border-radius:7px;overflow:hidden}
+  .bar i{display:block;height:100%;background:var(--dark);transition:width .4s}
+  .mod small{display:block;margin-top:8px;font-size:.74rem;color:var(--muted)}
+  @media(max-width:900px){.mod-grid{grid-template-columns:repeat(2,1fr)}}
+
+  .two{display:grid;grid-template-columns:1fr 1.1fr;gap:20px;margin-top:28px}
+  .card-y{background:var(--yellow);border-radius:16px;padding:26px}
+  .card-p{background:var(--purple);border-radius:16px;padding:26px}
+  .card-y h3,.card-p h3{margin-bottom:14px;font-size:1.05rem}
+  .card-y .row{display:flex;justify-content:space-between;font-size:.9rem;margin-bottom:6px;color:#5a4a1c}
+  .card-y .bar{background:#f1e6bd;margin-top:12px}
+  .ach-row{display:flex;gap:18px;flex-wrap:wrap}
+  .ach{text-align:center;font-size:.74rem;font-weight:600;color:#4a3a52;min-width:64px}
+  .ach span{display:block;font-size:1.7rem;margin-bottom:4px}
+  .ach.off{opacity:.35}
+  @media(max-width:820px){.two{grid-template-columns:1fr}}
+
+  /* CHALLENGES */
+  .chal{display:grid;grid-template-columns:1fr 1.3fr;gap:24px}
+  .cl{border-radius:12px;padding:15px 18px;margin-bottom:10px;border:1px solid var(--line);font-size:.9rem}
+  .cl b{display:block;margin-bottom:3px}.cl small{color:var(--muted)}
+  .cl.done{background:#EAF7EB;border-color:#BFE3C2}
+  .cl.act{background:#FFF6E4;border-color:#F0D28E}
+  .cl.lock{background:#F6F6F6;color:#999}
+  .quiz{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff}
+  .quiz-h{background:var(--blue);color:#fff;text-align:center;font-weight:700;padding:15px}
+  .quiz-b{padding:26px}
+  .qm{font-size:.82rem;color:var(--muted);margin-bottom:8px}
+  .qp{height:6px;background:#eaf1fb;border-radius:6px;overflow:hidden;margin-bottom:20px}
+  .qp i{display:block;height:100%;background:var(--blue);transition:width .3s}
+  .qt{font-weight:700;font-size:1.05rem;margin-bottom:16px}
+  .opt{border:1.5px solid #e4e4e4;border-radius:10px;padding:13px 16px;margin-bottom:10px;cursor:pointer;display:flex;justify-content:space-between;font-size:.92rem;transition:.15s}
+  .opt:hover{border-color:#c4d4c4}
+  .opt.sel{border-color:var(--mid);background:#F3FAF3}
+  .opt.ok{background:#EAF7EB;border-color:#7BC988;font-weight:700}
+  .opt.no{background:#FBEBEA;border-color:#E39A94}
+  .qf{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+  .qf small{color:var(--muted);font-weight:600}
+  .fb{margin-top:12px;font-weight:700;font-size:.88rem;min-height:1.3em}
+  .btn:disabled{background:#c9d6c9;cursor:not-allowed;transform:none}
+  @media(max-width:820px){.chal{grid-template-columns:1fr}}
+
+  /* RANKING */
+  table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  th,td{padding:14px 20px;text-align:left;font-size:.92rem;border-bottom:1px solid var(--line)}
+  th{background:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.08em;color:var(--dark)}
+  tr.me td{background:var(--yellow);font-weight:700}
+  td:last-child,th:last-child{text-align:right}
+  .note{font-size:.78rem;color:var(--muted);margin-top:10px}
+
+  /* ABOUT */
+  .feat{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:46px}
+  .feat div{border:1px solid var(--line);border-radius:14px;padding:24px;background:#fff}
+  .feat .k{width:42px;height:42px;border-radius:10px;background:var(--mod);display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin-bottom:12px}
+  .feat h3{font-size:1rem;margin-bottom:6px}.feat p{font-size:.88rem;color:var(--muted)}
+  .res{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:40px}
+  .res div{background:var(--deep);color:#fff;border-radius:14px;padding:26px 20px}
+  .res b{display:block;font-size:2.1rem;color:#A9DDAE}.res span{font-size:.82rem;opacity:.85}
+  .pills{display:flex;flex-wrap:wrap;gap:10px}
+  .pills span{border:1px solid var(--line);background:#fff;padding:7px 16px;border-radius:100px;font-size:.82rem;font-weight:600;color:#3b4a3b}
+  @media(max-width:820px){.feat{grid-template-columns:1fr}.res{grid-template-columns:repeat(2,1fr)}}
+
+  footer{background:var(--deep);color:#b9d7bc;padding:50px 0 30px;font-size:.88rem}
+  footer .wrap{display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap}
+  footer h4{color:#fff;margin-bottom:10px}
+  footer p,footer li{list-style:none;line-height:1.8}
+  .legal{margin-top:30px;padding-top:20px;border-top:1px solid rgba(255,255,255,.12);text-align:center;font-size:.76rem;width:100%}
+
+  /* MODAL */
+  .ov{display:none;position:fixed;inset:0;background:rgba(15,28,16,.6);z-index:100;align-items:center;justify-content:center;padding:20px}
+  .ov.open{display:flex}
+  .modal{background:#fff;width:100%;max-width:410px;border-radius:18px;overflow:hidden;box-shadow:0 40px 80px -20px rgba(0,0,0,.45);max-height:94vh;overflow-y:auto}
+  .mh{background:linear-gradient(135deg,var(--dark),var(--mid));color:#fff;padding:24px 28px 20px;position:relative}
+  .mh p{font-size:.85rem;opacity:.92;margin-top:4px}
+  .x{position:absolute;top:14px;right:16px;background:none;border:none;color:#fff;font-size:1.1rem;cursor:pointer}
+  .tabs{display:flex;border-bottom:1px solid var(--line)}
+  .tab{flex:1;padding:14px 0;border:none;background:#fafbfa;font-family:inherit;font-weight:700;font-size:.88rem;color:var(--muted);cursor:pointer}
+  .tab.on{background:#fff;color:var(--dark);box-shadow:inset 0 -2px 0 var(--dark)}
+  .mb{padding:24px 28px 28px}
+  .pane{display:none}.pane.on{display:block}
+  .f{margin-bottom:14px}
+  .f label{display:block;font-size:.78rem;font-weight:700;margin-bottom:6px;color:#3b4a3b}
+  .f input{width:100%;padding:11px 14px;border:1.5px solid #e1e5e1;border-radius:9px;font:inherit;font-size:.92rem;outline:none}
+  .f input:focus{border-color:var(--mid)}
+  .hint{font-size:.74rem;color:#a04a44;margin-top:5px;min-height:1em}
+  .sub-btn{width:100%;padding:13px;margin-top:4px}
+  .div{display:flex;align-items:center;gap:10px;margin:18px 0;font-size:.74rem;color:#9aa39a}
+  .div::before,.div::after{content:'';flex:1;height:1px;background:#e6e9e6}
+  .g{width:100%;background:#fff;border:1.5px solid #e1e5e1;padding:11px;border-radius:100px;font:inherit;font-weight:600;font-size:.88rem;cursor:pointer;color:#3b4a3b}
+  .sw{text-align:center;font-size:.82rem;color:var(--muted);margin-top:16px}
+  .sw a{color:var(--dark);font-weight:700;cursor:pointer}
+  .welcome{text-align:center}
+  .welcome .big{font-size:3rem;margin-bottom:8px}
+  .welcome h3{margin-bottom:6px}.welcome p{font-size:.88rem;color:var(--muted);margin-bottom:16px}
+  .bp{display:inline-block;background:var(--soft);padding:8px 16px;border-radius:100px;font-size:.8rem;font-weight:700;margin-bottom:18px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a href="#inicio" class="brand">🎋 EcoLearn</a>
+    <nav class="links">
+      <a href="#modulos">Módulos</a>
+      <a href="#desafios">Desafios</a>
+      <a href="#ranking">Ranking</a>
+      <a href="#sobre">Sobre</a>
+    </nav>
+    <div class="nav-right" id="navRight">
+      <button class="btn btn-outline btn-sm" onclick="openAuth('login')">Entrar</button>
+      <button class="btn btn-light btn-sm" onclick="openAuth('register')">Sign Up</button>
+    </div>
+  </div>
+</header>
+
+<main id="inicio">
+  <div class="hero">
+    <div class="wrap">
+      <div>
+        <h1>Aprenda. Jogue. Preserve.</h1>
+        <p>Educação ambiental gamificada para todos. Estude em módulos, enfrente desafios, ganhe XP e suba de nível na Jornada do Agente Ambiental.</p>
+        <div class="cta">
+          <button class="btn btn-light" onclick="openAuth('register')">Começar agora →</button>
+          <a href="#modulos"><button class="btn btn-outline" style="padding:13px 28px">Conhecer os módulos</button></a>
+        </div>
+      </div>
+      <div class="globe">🌍</div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="wrap">
+      <span>📖 Módulos: <b>5</b></span>
+      <span>🎯 Desafios: <b>24</b></span>
+      <span>👥 Usuários: <b id="userCount">1.200+</b></span>
+      <span>⭐ Avaliação: <b>4.8/5</b></span>
+    </div>
+  </div>
+
+  <!-- MODULOS -->
+  <section id="modulos">
+    <div class="wrap">
+      <div class="eyebrow">Trilha de aprendizagem</div>
+      <h2>🌿 Módulos de Aprendizagem</h2>
+      <p class="sub">Cinco temas ambientais com artigos, vídeos, infográficos, quizzes e missões. Complete um módulo para liberar o próximo.</p>
+
+      <div class="mod-grid">
+        <a class="mod" href="#desafios"><div class="ic">🌡️</div><h3>Mudanças Climáticas</h3><div class="bar"><i style="width:65%"></i></div><small>65% concluído</small></a>
+        <div class="mod"><div class="ic">🦋</div><h3>Biodiversidade e Ecossistemas</h3><div class="bar"><i style="width:35%"></i></div><small>35% concluído</small></div>
+        <div class="mod"><div class="ic">♻️</div><h3>Resíduos Sólidos</h3><div class="bar"><i style="width:17%"></i></div><small>17% concluído</small></div>
+        <div class="mod locked"><div class="ic">💧</div><h3>Recursos Hídricos</h3><small>Bloqueado 🔒</small></div>
+        <div class="mod locked"><div class="ic">🛍️</div><h3>Consumo Sustentável</h3><small>Bloqueado 🔒</small></div>
+      </div>
+
+      <div class="two">
+        <div class="card-y">
+          <h3>⭐ Seu Progresso</h3>
+          <div id="progBox"><p style="font-size:.9rem;color:#5a4a1c">Crie sua conta ou entre para acompanhar nível e XP.</p></div>
+        </div>
+        <div class="card-p">
+          <h3>🏆 Conquistas</h3>
+          <div class="ach-row" id="achRow"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DESAFIOS -->
+  <section id="desafios" class="alt">
+    <div class="wrap">
+      <div class="eyebrow">Mudanças Climáticas</div>
+      <h2>🎯 Desafios</h2>
+      <p class="sub">Responda ao quiz, acerte pelo menos 70% e ganhe 30 XP. Feedback imediato em cada questão.</p>
+
+      <div class="chal">
+        <div>
+          <div class="cl done"><b>✅ Quiz: Efeito Estufa</b><small>10 questões • 30 XP • Concluído</small></div>
+          <div class="cl act"><b>▶ Quiz: Gases do Efeito Estufa</b><small>4 questões • 30 XP • Em andamento</small></div>
+          <div class="cl lock"><b>🔒 Missão: Pegada de Carbono</b><small>Atividade prática • 50 XP</small></div>
+          <div class="cl lock"><b>🔒 Missão: Acordo de Paris</b><small>Bloqueado • Complete o anterior</small></div>
+        </div>
+        <div class="quiz">
+          <div class="quiz-h">Quiz: Gases do Efeito Estufa</div>
+          <div class="quiz-b" id="quizBody"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RANKING -->
+  <section id="ranking">
+    <div class="wrap">
+      <div class="eyebrow">Competição saudável</div>
+      <h2>🏅 Ranking</h2>
+      <p class="sub">Os usuários com mais XP na semana. Sua posição aparece em destaque assim que você entra.</p>
+      <table>
+        <thead><tr><th>#</th><th>Agente</th><th>Nível</th><th>XP</th></tr></thead>
+        <tbody id="rankBody"></tbody>
+      </table>
+      <p class="note">Dados de exemplo para demonstração.</p>
+    </div>
+  </section>
+
+  <!-- SOBRE -->
+  <section id="sobre" class="alt">
+    <div class="wrap">
+      <div class="eyebrow">Sobre o projeto</div>
+      <h2>Feito para engajar, pensado para ensinar</h2>
+      <p class="sub">A EcoLearn nasceu como Trabalho de Conclusão de Curso no Centro Universitário Newton Paiva Wyden, unindo Ciência da Computação, Sistemas de Informação e Engenharia de Produção.</p>
+
+      <div class="feat">
+        <div><div class="k">⚡</div><h3>Pontos de experiência</h3><p>10 XP por artigo, 15 por vídeo, 30 por quiz e 50 por missão. Um nível a cada 100 XP.</p></div>
+        <div><div class="k">🔥</div><h3>Streak diário</h3><p>+10 XP por dia consecutivo de acesso para transformar estudo em hábito.</p></div>
+        <div><div class="k">🏅</div><h3>Badges e ranking</h3><p>Eco-Iniciante, Guardião Verde e Mestre Sustentável, com ranking semanal e geral.</p></div>
+      </div>
+
+      <div class="res">
+        <div><b>78,5</b><span>pontuação SUS — usabilidade “boa”</span></div>
+        <div><b>320ms</b><span>tempo médio de resposta da API</span></div>
+        <div><b>99,7%</b><span>disponibilidade em 30 dias</span></div>
+        <div><b>83%</b><span>concluíram um módulo na 1ª sessão</span></div>
+      </div>
+
+      <div class="pills">
+        <span>React.js</span><span>Redux Toolkit</span><span>Tailwind CSS</span><span>Node.js + Express</span>
+        <span>Socket.io</span><span>MongoDB</span><span>Redis</span><span>AWS</span><span>Docker</span><span>JWT</span>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div><h4>🎋 EcoLearn</h4><p>Educação ambiental gamificada,<br>gratuita e acessível.</p></div>
+    <div><h4>Instituição</h4><p>Centro Universitário Newton Paiva Wyden<br>Belo Horizonte — MG, 2026</p></div>
+    <div><h4>Autoria</h4><ul><li>Igor Moreira Brito Silva</li><li>Glauber Marcos Ferreira da Silva</li><li>Lucas Fernandes Moreira Moura</li><li>Marcelo Henrique Lima Veloso</li></ul></div>
+    <div><h4>Orientação</h4><p>Prof. Fernando Cabral Lage</p></div>
+    <div class="legal">ODS 4 · Educação de Qualidade — ODS 13 · Ação contra a Mudança Global do Clima — ODS 15 · Vida Terrestre</div>
+  </div>
+</footer>
+
+<!-- AUTH MODAL -->
+<div class="ov" id="ov" onclick="if(event.target===this)closeAuth()">
+  <div class="modal">
+    <div class="mh">
+      <button class="x" onclick="closeAuth()" aria-label="Fechar">✕</button>
+      <div class="brand">🎋 EcoLearn</div>
+      <p>Entre na Jornada do Agente Ambiental</p>
+    </div>
+    <div class="tabs" id="tabs">
+      <button class="tab" id="tLogin" onclick="tab('login')">Entrar</button>
+      <button class="tab" id="tReg" onclick="tab('register')">Criar conta</button>
+    </div>
+    <div class="mb">
+      <div class="pane" id="pLogin">
+        <form onsubmit="doLogin(event)">
+          <div class="f"><label>E-mail</label><input type="email" id="lEmail" placeholder="voce@email.com" required></div>
+          <div class="f"><label>Senha</label><input type="password" id="lPass" placeholder="••••••••" required><div class="hint" id="lHint"></div></div>
+          <button class="btn btn-dark sub-btn" type="submit">Entrar →</button>
+        </form>
+        <div class="div">ou continue com</div>
+        <button class="g" onclick="doGoogle()">Continuar com Google</button>
+        <div class="sw">Ainda não tem conta? <a onclick="tab('register')">Cadastre-se</a></div>
+      </div>
+
+      <div class="pane" id="pReg">
+        <form onsubmit="doRegister(event)">
+          <div class="f"><label>Nome completo</label><input type="text" id="rName" placeholder="Seu nome" required></div>
+          <div class="f"><label>E-mail</label><input type="email" id="rEmail" placeholder="voce@email.com" required></div>
+          <div class="f"><label>Senha</label><input type="password" id="rPass" placeholder="Mínimo 8 caracteres" minlength="8" required></div>
+          <div class="f"><label>Confirmar senha</label><input type="password" id="rPass2" placeholder="Repita a senha" required><div class="hint" id="rHint"></div></div>
+          <button class="btn btn-dark sub-btn" type="submit">Criar conta →</button>
+        </form>
+        <div class="div">ou continue com</div>
+        <button class="g" onclick="doGoogle()">Continuar com Google</button>
+        <div class="sw">Já tem conta? <a onclick="tab('login')">Entrar</a></div>
+      </div>
+
+      <div class="pane" id="pWelcome">
+        <div class="welcome">
+          <div class="big">🌱</div>
+          <h3 id="wName">Bem-vindo(a)!</h3>
+          <p>Sua conta foi criada. Agora é só estudar, ganhar XP e desbloquear badges.</p>
+          <div class="bp">🏅 Badge desbloqueado: Eco-Iniciante</div>
+          <button class="btn btn-dark sub-btn" onclick="finish()">Começar agora →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* In-memory state (no browser storage): resets on reload. */
+const users=[]; let me=null;
+const baseRank=[
+  {name:'Ana Beatriz', xp:1480},{name:'Rafael Costa', xp:1310},{name:'Marina Alves', xp:1190},
+  {name:'João Pedro', xp:980},{name:'Camila Rocha', xp:760}
+];
+const level=xp=>Math.floor(xp/100)+1;
+const fmt=n=>n.toLocaleString('pt-BR');
+
+/* ---------- AUTH ---------- */
+function openAuth(m){document.getElementById('ov').classList.add('open');tab(m)}
+function closeAuth(){document.getElementById('ov').classList.remove('open')}
+function tab(m){
+  document.getElementById('tabs').style.display='flex';
+  ['Login','Reg','Welcome'].forEach(p=>document.getElementById('p'+p).classList.remove('on'));
+  document.getElementById('tLogin').classList.toggle('on',m==='login');
+  document.getElementById('tReg').classList.toggle('on',m==='register');
+  document.getElementById(m==='login'?'pLogin':'pReg').classList.add('on');
+}
+function doRegister(e){
+  e.preventDefault();
+  const name=rName.value.trim(), email=rEmail.value.trim().toLowerCase(), p=rPass.value, p2=rPass2.value, h=document.getElementById('rHint');
+  if(p!==p2){h.textContent='As senhas não coincidem.';return}
+  if(users.some(u=>u.email===email)){h.textContent='Já existe uma conta com esse e-mail.';return}
+  h.textContent='';
+  me={name,email,pass:p,xp:0,done:false}; users.push(me);
+  document.getElementById('wName').textContent='Bem-vindo(a), '+name.split(' ')[0]+'!';
+  document.getElementById('tabs').style.display='none';
+  document.getElementById('pReg').classList.remove('on');
+  document.getElementById('pWelcome').classList.add('on');
+}
+function doLogin(e){
+  e.preventDefault();
+  const u=users.find(u=>u.email===lEmail.value.trim().toLowerCase()), h=document.getElementById('lHint');
+  if(!u){h.textContent='Nenhuma conta com esse e-mail. Crie uma conta primeiro.';return}
+  if(u.pass!==lPass.value){h.textContent='Senha incorreta.';return}
+  me=u; closeAuth(); refresh();
+}
+function doGoogle(){
+  let u=users.find(u=>u.email==='usuario@gmail.com');
+  if(!u){u={name:'Usuário Google',email:'usuario@gmail.com',pass:null,xp:0};users.push(u)}
+  me=u; closeAuth(); refresh();
+}
+function finish(){closeAuth();refresh();location.hash='#modulos'}
+function logout(){me=null;refresh()}
+
+/* ---------- RENDER ---------- */
+function refresh(){
+  const nr=document.getElementById('navRight');
+  if(me){
+    const ini=me.name.split(' ').map(p=>p[0]).slice(0,2).join('').toUpperCase();
+    nr.innerHTML=`<span class="xp-pill">${fmt(me.xp)} XP</span><span class="avatar">${ini}</span><button class="logout" onclick="logout()">Sair</button>`;
+    const lv=level(me.xp), into=me.xp%100;
+    progBox.innerHTML=`<div class="row"><span>Nível</span><b>${lv}</b></div>
+      <div class="row"><span>XP total</span><b>${fmt(me.xp)} XP</b></div>
+      <div class="row"><span>Próximo nível</span><b>${into} / 100 XP</b></div>
+      <div class="bar"><i style="width:${into}%"></i></div>`;
+  }else{
+    nr.innerHTML=`<button class="btn btn-outline btn-sm" onclick="openAuth('login')">Entrar</button><button class="btn btn-light btn-sm" onclick="openAuth('register')">Sign Up</button>`;
+    progBox.innerHTML='<p style="font-size:.9rem;color:#5a4a1c">Crie sua conta ou entre para acompanhar nível e XP.</p>';
+  }
+  const xp=me?me.xp:0;
+  const A=[['🌱','Eco-Iniciante',!!me],['🍃','Verde Ativo',xp>=30],['🔥','Streak 7 dias',false],['🛡️','Guardião Verde',xp>=100],['🌳','Mestre',xp>=500]];
+  achRow.innerHTML=A.map(a=>`<div class="ach ${a[2]?'':'off'}"><span>${a[2]?a[0]:'🔒'}</span>${a[1]}</div>`).join('');
+  const list=baseRank.map(r=>({...r}));
+  users.forEach(u=>list.push({name:u.name,xp:u.xp,me:u===me}));
+  list.sort((a,b)=>b.xp-a.xp);
+  rankBody.innerHTML=list.map((r,i)=>`<tr class="${r.me?'me':''}"><td>${i+1}</td><td>${r.name}${r.me?' (você)':''}</td><td>${level(r.xp)}</td><td>${fmt(r.xp)}</td></tr>`).join('');
+  userCount.textContent=users.length?`1.200+ (+${users.length} nesta sessão)`:'1.200+';
+}
+
+/* ---------- QUIZ ---------- */
+const Q=[
+  {q:'Qual gás é o principal responsável pelo aquecimento global de origem humana?',o:['Dióxido de carbono (CO₂)','Oxigênio (O₂)','Nitrogênio (N₂)','Hélio (He)'],a:0},
+  {q:'Qual acordo internacional de 2015 busca limitar o aumento da temperatura global?',o:['Protocolo de Montreal','Acordo de Paris','Convenção de Basileia','Tratado da Antártida'],a:1},
+  {q:'Qual atividade é a maior fonte global de emissões de gases de efeito estufa?',o:['Queima de combustíveis fósseis','Reciclagem de papel','Energia solar','Reflorestamento'],a:0},
+  {q:'O que é “pegada de carbono”?',o:['O peso de uma árvore adulta','O total de gases de efeito estufa gerados por uma pessoa ou atividade','A quantidade de carvão em uma mina','Um tipo de crédito bancário'],a:1}
+];
+let qi=0, sel=null, score=0, answered=false;
+function renderQ(){
+  const el=document.getElementById('quizBody');
+  if(qi>=Q.length){
+    const pct=Math.round(score/Q.length*100), pass=pct>=70;
+    let msg='';
+    if(pass){
+      if(me){me.xp+=30;msg=`Você ganhou <b>+30 XP</b>!`}
+      else msg=`Você atingiu a nota, mas precisa <a style="color:var(--dark);text-decoration:underline;cursor:pointer" onclick="openAuth('register')">criar uma conta</a> para receber os 30 XP.`;
+    } else msg='É preciso 70% de acerto para ganhar XP. Tente de novo!';
+    el.innerHTML=`<div style="text-align:center;padding:20px 0"><div style="font-size:3rem">${pass?'🎉':'📘'}</div>
+      <h3 style="margin:8px 0">${score} de ${Q.length} acertos (${pct}%)</h3><p style="color:var(--muted);margin-bottom:18px">${msg}</p>
+      <button class="btn btn-dark" onclick="qi=0;score=0;renderQ()">Refazer quiz</button></div>`;
+    refresh(); return;
+  }
+  const q=Q[qi]; sel=null; answered=false;
+  el.innerHTML=`<div class="qm">Questão ${qi+1} de ${Q.length}</div>
+    <div class="qp"><i style="width:${(qi/Q.length)*100}%"></i></div>
+    <div class="qt">${q.q}</div>
+    ${q.o.map((t,i)=>`<div class="opt" onclick="pick(${i},this)"><span>${'ABCD'[i]}) ${t}</span><span class="mk"></span></div>`).join('')}
+    <div class="qf"><small>+30 XP ao concluir</small><button class="btn btn-dark" id="cBtn" disabled onclick="confirmQ()">Confirmar →</button></div>
+    <div class="fb" id="fb"></div>`;
+}
+function pick(i,el){
+  if(answered)return; sel=i;
+  document.querySelectorAll('.opt').forEach(o=>o.classList.remove('sel')); el.classList.add('sel');
+  document.getElementById('cBtn').disabled=false;
+}
+function confirmQ(){
+  if(sel===null)return;
+  const q=Q[qi], opts=document.querySelectorAll('.opt'); answered=true;
+  opts[q.a].classList.add('ok'); opts[q.a].querySelector('.mk').textContent='✓';
+  const right=sel===q.a;
+  if(right)score++; else {opts[sel].classList.add('no');opts[sel].querySelector('.mk').textContent='✕'}
+  const fb=document.getElementById('fb'); fb.style.color=right?'#2c7a34':'#a04a44';
+  fb.textContent=right?'Resposta correta!':'Não foi dessa vez — a resposta certa está destacada.';
+  const b=document.getElementById('cBtn'); b.textContent=qi===Q.length-1?'Ver resultado →':'Próxima →'; b.onclick=()=>{qi++;renderQ()};
+}
+renderQ(); refresh();
+</script>
+</body>
+</html>
